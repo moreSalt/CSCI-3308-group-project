@@ -6,7 +6,7 @@ Jared Preyer  	(Jpreyer17)
 Max Knauss 		(Max2478)
 Alexis Mollet 	(alexismollet)
 Noah Mamo 		(Noma4697)
-Application name: ShopStop , LocalLoot
+Application name: ComicReview
 Application Description: Take your grocery list and find the best store to shop at based on price.
 Vision Statement: “We aim to simplify grocery shopping by pinpointing the right store for your needs, helping you make savvy, wallet-friendly choices.”
 Version Control: https://github.com/moreSalt/CSCI-3308-group-project 
