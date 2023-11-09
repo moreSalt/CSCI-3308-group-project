@@ -5,5 +5,8 @@ create TABLE users(
 );
 CREATE TABLE reviews(
     users_id INT NOT NULL,
-    FOREIGN KEY (users_id) REFERENCES users(users_id)
+    FOREIGN KEY (users_id) REFERENCES users(users_id),
+    review TEXT NOT NULL,
+    rating FLOAT NOT NULL,
+    date DATE NOT NULL,
 );
