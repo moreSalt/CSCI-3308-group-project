@@ -14,7 +14,7 @@ Development Methodology: Agile
 Communication plan: We have a discord server so we can chat and make calls, along with scheduling in person meetings.
        10.	Meeting plan: 
 Weekly Meeting with TA: 9 November 2023 (Thursdays) sometime between 12:00pm - 12:15pm, location will be zoom.
-Team Meeting: 7 November 2023(Tuesday) 7:00 PM - 7:30 PM
+Team Meeting: 9 November 2023(Tuesday) 9:30 PM - 11:00 PM
        11.   Use Case Diagram
 API setup
 User account authentication, creation, login, etc.
