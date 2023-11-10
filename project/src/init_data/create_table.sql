@@ -2,7 +2,8 @@
 CREATE TABLE users(
     username VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(20) NOT NULL,
-    users_id INT AUTO_INCREMENT PRIMARY KEY
+    users_id INT NOT NULL AUTO_INCREMENT
+    PRIMARY KEY (users_id)
 );
 -- For Reviews have users_id with the text, rating, and date
 CREATE TABLE reviews(
