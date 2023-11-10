@@ -1,2 +1,8 @@
-- 08 Novemeber 2023
+Meeting minutes (11/8):
 All Members present from 9:30 PM - 11PM
+We realized the API we had thought we could use only provided 50 requests per month
+We wanted to pivot to a new project, started with an API we knew we could use (Marvel commic API)
+Designed the rest of the project:
+Will be a feed of random comics (each have ratings and comments w/ time stamps)
+Re designed wireframe for app
+Formatted repo with folder structure frame
