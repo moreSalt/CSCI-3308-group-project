@@ -125,5 +125,4 @@ app.get('/welcome', (req, res) => {
 // marvel-api: title, image, the rest from the db
 // methods: GET, POST
 
-app.listen(3000);
 module.exports = app.listen(3000);
