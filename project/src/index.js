@@ -106,6 +106,10 @@ app.post("/login", async function(req, res) {
     }
 })
 
+app.get('/welcome', (req, res) => {
+    res.json({status: 'success', message: 'Welcome!'});
+  });
+
 // ACCOUNT: look at your past reviews and maybe things like add a pfp
 
 
@@ -120,3 +124,5 @@ app.post("/login", async function(req, res) {
 // COMIC: look at reviews of a specific comic
 // marvel-api: title, image, the rest from the db
 // methods: GET, POST
+
+module.exports = app.listen(3000);
