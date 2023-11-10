@@ -52,7 +52,7 @@ app.use(
 
 // HOME
 app.get("/", async function(req, res) {
-    res.render("/pages/home")
+    res.render("/pages/login")
 })
 
 
