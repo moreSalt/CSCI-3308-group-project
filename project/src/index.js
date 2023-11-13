@@ -59,7 +59,7 @@ app.get("/", async function(req, res) {
 // REGISTER
 
 app.get("/register", async function(req, res) {
-    res.render("pages/login");
+    res.render("pages/register");
 })
   
 app.post("/register", async function(req, res) {
@@ -80,7 +80,7 @@ app.post("/register", async function(req, res) {
 
 // LOGIN
 app.get("/login", async function(req, res) {
-    res.render("pages/home");
+    res.render("pages/login");
   
 })
 

@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS users;
 -- For Login in Page and Creating a user
 CREATE TABLE users(
     username VARCHAR(50) PRIMARY KEY,
-    password VARCHAR(60) NOT NULL
+    password VARCHAR(70) NOT NULL
 );
 DROP TABLE IF EXISTS reviews;
 -- For Reviews have users_id with the text, rating, and date
