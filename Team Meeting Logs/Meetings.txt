@@ -1,16 +1,18 @@
 Meeting minutes (11/8):
-All Members present from 9:30 PM - 11PM
+All Members present from 9:30 PM - 11 PM
 We realized the API we had thought we could use only provided 50 requests per month
-We wanted to pivot to a new project, started with an API we knew we could use (Marvel commic API)
+We wanted to pivot to a new project, and started with an API we knew we could use (Marvel comic API)
 Designed the rest of the project:
-Will be a feed of random comics (each have ratings and comments w/ time stamps)
-Re designed wireframe for app
+There will be a feed of random comics (each has ratings and comments with/ time stamps)
+Re-designed wireframe for the app
 Formatted repo with folder structure frame
 
 Meeting Varsha 09 November 2023 from 12:00 PM - 12:15 PM.
 All Members Present.
 Points Taking Off 27.5/ 35:
-Tasks are present on Ice box, not everyone has a task assigned to them on the project board. 2.5/5 Points
+Tasks are present on Icebox, not everyone has a task assigned to them on the project board. 2.5/5 Points
 Release notes have been updated for the week 0/5 Points
 
-Meeting with Team 13 November 2023 at 4PM. 
+Meeting with Team 13 November 2023 at 4:00 PM - 4:30 PM. 
+All Members Present. 
+Discussed roles with the team.
