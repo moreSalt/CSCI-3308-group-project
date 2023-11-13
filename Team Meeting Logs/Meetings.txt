@@ -6,3 +6,11 @@ Designed the rest of the project:
 Will be a feed of random comics (each have ratings and comments w/ time stamps)
 Re designed wireframe for app
 Formatted repo with folder structure frame
+
+Meeting Varsha 09 November 2023 from 12:00 PM - 12:15 PM.
+All Members Present.
+Points Taking Off 27.5/ 35:
+Tasks are present on Ice box, not everyone has a task assigned to them on the project board. 2.5/5 Points
+Release notes have been updated for the week 0/5 Points
+
+Meeting with Team 13 November 2023 at 4PM. 
