@@ -125,4 +125,20 @@ app.get('/welcome', (req, res) => {
 // marvel-api: title, image, the rest from the db
 // methods: GET, POST
 
+// Create a user logout that sends a message to confirm the user for a logout session.
+app.get("/logout", async function(req, res) {
+    try {
+      await req.session.destroy()
+      return await res.render("pages/login", {
+        error: false,
+        message: "Logged out Successfully"
+      })
+  
+    } catch (error) {
+       await res.render("pages/login",{
+            error: true,
+            message: error,
+        })
+    }
+  })
 module.exports = app.listen(3000);
