@@ -9,5 +9,5 @@ DROP TABLE IF EXISTS reviews;
 CREATE TABLE reviews(
     review TEXT NOT NULL,
     rating FLOAT NOT NULL,
-    date DATE NOT NULL
+    review_date DATE NOT NULL
 );
