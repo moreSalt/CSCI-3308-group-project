@@ -55,7 +55,6 @@ app.get("/", async function(req, res) {
     res.render("pages/login")
 })
 
-
 // REGISTER
 
 app.get("/register", async function(req, res) {
@@ -81,7 +80,6 @@ app.post("/register", async function(req, res) {
 // LOGIN
 app.get("/login", async function(req, res) {
     res.render("pages/login");
-  
 })
 
 app.post("/login", async function(req, res) {
@@ -92,6 +90,7 @@ app.post("/login", async function(req, res) {
         ])
         const match = await bcrypt.compare(req.body.password, user.password);
         if (match) {
+            console.log("in")
             req.session.user = user;
             req.session.save()
             res.redirect("/feed")
@@ -99,6 +98,7 @@ app.post("/login", async function(req, res) {
             throw new Error("Invalid username/password")
         }
     } catch (error) {
+        console.log(error)
        await res.render("pages/login",{
             error: true,
             message: error
