@@ -56,11 +56,9 @@ app.get("/", async function(req, res) {
 })
 
 // REGISTER
-
 app.get("/register", async function(req, res) {
     res.render("pages/register");
 })
-  
 app.post("/register", async function(req, res) {
       try {
           const hash = await bcrypt.hash(req.body.password, 10)
@@ -84,7 +82,6 @@ app.get("/login", async function(req, res) {
 
 app.post("/login", async function(req, res) {
     try {
-
         const user = await db.one("SELECT * FROM users WHERE username = $1 ;", [
             req.body.username
         ])
@@ -93,7 +90,7 @@ app.post("/login", async function(req, res) {
             console.log("in")
             req.session.user = user;
             req.session.save()
-            res.redirect("/feed")
+            res.redirect("/home")
         } else {
             throw new Error("Invalid username/password")
         }
