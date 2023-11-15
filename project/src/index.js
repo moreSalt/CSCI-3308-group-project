@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session'); // To set the session object. To store or access session data, use the `req.session`, which is (generally) serialized as JSON by the store.
 const bcrypt = require('bcrypt'); //  To hash passwords
 // const axios = require('axios'); // To make HTTP requests from our server.
-
+const MarvelAPI = require("./api/comics.js")
 // database configuration
 const dbConfig = {
     host: 'db', // the database server
@@ -46,6 +46,7 @@ app.use(
     })
 );
 
+const api = new MarvelAPI(process.env.MARVEL_API_KEY)
 // ********************
 // ROUTES
 // ********************
@@ -133,6 +134,27 @@ app.get('/welcome', (req, res) => {
 // COMIC: look at reviews of a specific comic
 // marvel-api: title, image, the rest from the db
 // methods: GET, POST
+app.get("/comics/:id", async (req, res) => {
+    try {
+        const data = await api.specificComic(parseInt(req.params.id))
+        await res.render("pages/comic", {
+            data: data,
+            reviews: [
+                {
+                    title: "Example review",
+                    description: "Sed fugit fugiat voluptatem et adipisci et aspernatur. Vero reprehenderit sint officia mollitia dolore in debitis. Consequatur laudantium totam ad rem commodi. Error maxime inventore unde omnis odio laboriosam. Quos dignissimos quas ad ut tenetur dolo"
+                }
+            ],
+            message: "wow"
+        })
+    } catch (error) {
+        await res.render("pages/login",{
+            error: true,
+            message: error,
+            results: []
+        })
+    }
+})
 
 // Create a user logout that sends a message to confirm the user for a logout session.
 app.get("/logout", async function(req, res) {
