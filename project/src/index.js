@@ -73,6 +73,16 @@ app.get("/register", async function(req, res) {
 })
 app.post("/register", async function(req, res) {
       try {
+            const username = req.body.username;
+            const query1 = "select * from users where users.username = $1;";
+            const user = await db.oneOrNone(query1, username);
+            if (user) {
+            return res.render("pages/register", { message: "Username taken" });
+            }
+            if (!req.body.username || !req.body.password) {
+            return res.render("pages/register", { message: "Please input both username and password" });
+            }
+
           const hash = await bcrypt.hash(req.body.password, 10)
           const query = await db.one("INSERT INTO users(username, password) VALUES ($1, $2) returning * ;", [
               req.body.username,
