@@ -50,6 +50,12 @@ app.use(
 // ROUTES
 // ********************
 
+
+// DEFAULT
+app.get("/", async function(req, res) {
+    res.render("pages/login");
+})
+
 // HOME
 app.get("/home", async function(req, res) {
     if (req.session.user) {
