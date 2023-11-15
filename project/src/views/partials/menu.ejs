@@ -17,6 +17,12 @@
               <!-- removed discover button -->
             </li>
           </ul>
+          <!-- Making the partial appear but it also shows before login -->
+          <div class="nav-item me-1">
+            <%- include ('./search') %>
+                
+          </div>
+
           <div class="nav-item me-1">
             <!-- TO-DO: For Logout, add a <a> tag with an attribute href to call the '/logout API -->
                 <a class = "btn btn-danger" href = "/logout"> Logout </a>
