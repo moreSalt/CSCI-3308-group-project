@@ -1,0 +1,65 @@
+To-Do: Create UAT plans for at least 3 features
+REMEMBER
+You have to execute this test plan in week 4 of your project. So it would be ideal if your test plan is well thought through as it will expedite the testing process.
+
+Create 1 document per team, within the milestones folder in the project directory, that describes how, at least, 3 features within your finished product will be tested.
+1. The test plans should include specific test cases (user acceptance test cases) that describe the data and the user activity that will be executed in order to verify proper functionality of the feature.
+2. The test plans should include a description of the test data that will be used to test the feature.
+3. The test plans should include a description of the test environment that will be used to test the feature.
+    - all test will be tested from the docker container on a laptop
+4. The test plans should include a description of the test results that will be used to test the feature.
+5. The test plan should include information about the user acceptance testers.
+    - both technical (the builders of the program) and non-technical (a random friedn who has no expceptional computer skills)
+
+// TEST 1 - Registration //
+User is on the /register page
+Successful Registration:
+    Inputs:
+    - Username: 'testing'
+    - Password: 'supersafe'
+    Expected results:
+    - update to the database
+    - confirmation message that the user registration worked well
+    - user gets redirected to /login page
+Leaving Required fields open:
+    Inputs: leave one or more required fields open
+    Expected result:
+    - Error message: 'missing required field'
+    - redirect to empty registration page again
+Duplicate Entry:
+    Inputs: uses a username which already exists
+    Expected result:
+    - Error message 'Username is not available'
+    - redirect to empty registration page again
+
+// TEST 2 - Login //
+User is on the /login page
+Successful Login
+    Inputs(that match those existing within the database):
+    - Username:
+    - Password:
+    Expected result:
+    - user enters the app and gets redirected to the /feed page.
+Invalid username/ Password
+    Inputs: username and/or password does not exist within the database
+    Expected result: 
+    - Error message: 'Invalid Username/password'
+    - redirect to empty /login to try again
+Empty fields
+    Inputs: leave username/ password as empty
+    Expected result:
+    - Error message: 'Invalid Username/password'
+    - redirect to empty /login to try again
+
+// TEST 3 - Adding a Comment //
+User is on their /feed page and attempts to type in a Comment
+Valid Comment
+    Input: "This comic is my favorite!"
+    Expected result: comment is added to the database and shows up at the top of the comment list
+Empty Comment
+    Input: (empty)
+    Expected result: nothing happens we dont want to fill the database with empty comments
+Special Characters
+    Inputs: try special characters like numbers, punctuation and emojis
+    Expected result:
+    - comment is added to database and posts to comment section like normal
