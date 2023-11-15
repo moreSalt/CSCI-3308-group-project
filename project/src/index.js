@@ -51,9 +51,15 @@ app.use(
 // ********************
 
 // HOME
-app.get("/", async function(req, res) {
-    res.render("pages/login")
-})
+app.get("/home", async function(req, res) {
+    if (req.session.user) {
+        // Render the home page if the user is logged in
+        res.render("pages/home", { user: req.session.user });
+    } else {
+        // Redirect to login if the user is not logged in
+        res.redirect("/login");
+    }
+});
 
 // REGISTER
 app.get("/register", async function(req, res) {
