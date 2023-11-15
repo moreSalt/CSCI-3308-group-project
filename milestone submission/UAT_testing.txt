@@ -1,6 +1,7 @@
 To-Do: Create UAT plans for at least 3 features
 REMEMBER
 You have to execute this test plan in week 4 of your project. So it would be ideal if your test plan is well thought through as it will expedite the testing process.
+ACCEPTANCE CRITERIA: refers to a set of predefined requirements that must be met in order to mark a user story as complete.
 
 Create 1 document per team, within the milestones folder in the project directory, that describes how, at least, 3 features within your finished product will be tested.
 1. The test plans should include specific test cases (user acceptance test cases) that describe the data and the user activity that will be executed in order to verify proper functionality of the feature.
