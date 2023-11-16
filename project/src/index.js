@@ -54,7 +54,7 @@ const api = new MarvelAPI(process.env.MARVEL_API_KEY)
 
 // DEFAULT
 app.get("/", async function(req, res) {
-    res.render("pages/login");
+    res.render("pages/home");
 })
 
 // REGISTER
@@ -93,8 +93,11 @@ app.get("/login", async function(req, res) {
     res.render("pages/login");
 })
 
+// var currentUser = "name";
+
 app.post("/login", async function(req, res) {
     try {
+        // currentUser = req.body.username;
         const user = await db.oneOrNone("SELECT * FROM users WHERE username = $1 ;", [
             req.body.username
         ])
@@ -152,6 +155,25 @@ app.get("/home", async function(req, res) {
     // }                                //the authentication middleware made this redundant
 
     res.render("pages/home", { user: req.session.user });
+});
+
+app.post("/search", async function(req, res) {
+    try{
+    if (req.body.searchQuery < 1) {
+        throw new Error("Please enter a positive comic ID")
+    }
+
+    const text1 = "/comics/";
+    const entry = text1.concat(req.body.searchQuery);
+    return await res.redirect(entry);
+
+    }catch (error) {
+        console.log(error)
+        await res.render("pages/home",{
+            error: true,
+            message: error
+        })
+    }
 });
   
 

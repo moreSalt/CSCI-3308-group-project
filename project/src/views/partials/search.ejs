@@ -1,16 +1,16 @@
-<form action="/search" method="GET">  <!-- we need a search route to the api -->
+<form action="/search" method="POST">  <!-- we need a search route to the api -->
     
 
     
-    <div class="row">
+    <!-- <div class="row"> -->
         <div class ="col">
-            <input name="query" type="text" placeholder="search comics" class="form-control">
+            <input id="searchQuery" name="searchQuery" type="number" placeholder="ID based comic search" class="form-control" required>
         </div>
         <div class ="col">
             <button type="submit" class="btn btn-primary">Search</button>
         </div>
 
-    </div>
+    <!-- </div> -->
 
 
 </form>
