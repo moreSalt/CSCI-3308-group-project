@@ -11,3 +11,5 @@ CREATE TABLE IF NOT EXISTS reviews(
     rating FLOAT NOT NULL,
     review_date DATE NOT NULL
 );
+
+

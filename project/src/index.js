@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session'); // To set the session object. To store or access session data, use the `req.session`, which is (generally) serialized as JSON by the store.
 const bcrypt = require('bcrypt'); //  To hash passwords
 // const axios = require('axios'); // To make HTTP requests from our server.
-
+const MarvelAPI = require("./api/comics.js")
 // database configuration
 const dbConfig = {
     host: 'db', // the database server
@@ -46,6 +46,7 @@ app.use(
     })
 );
 
+const api = new MarvelAPI(process.env.MARVEL_API_KEY)
 // ********************
 // ROUTES
 // ********************
@@ -53,19 +54,8 @@ app.use(
 
 // DEFAULT
 app.get("/", async function(req, res) {
-    res.render("pages/login");
+    res.render("pages/home");
 })
-
-// HOME
-app.get("/home", async function(req, res) {
-    if (req.session.user) {
-        // Render the home page if the user is logged in
-        res.render("pages/home", { user: req.session.user });
-    } else {
-        // Redirect to login if the user is not logged in
-        res.redirect("/login");
-    }
-});
 
 // REGISTER
 app.get("/register", async function(req, res) {
@@ -77,10 +67,11 @@ app.post("/register", async function(req, res) {
             const query1 = "select * from users where users.username = $1;";
             const user = await db.oneOrNone(query1, username);
             if (user) {
-            return res.render("pages/register", { message: "Username taken" });
+            throw new Error("Username taken")
+
             }
             if (!req.body.username || !req.body.password) {
-            return res.render("pages/register", { message: "Please input both username and password" });
+            throw new Error("Please input both username and password")
             }
 
           const hash = await bcrypt.hash(req.body.password, 10)
@@ -102,11 +93,22 @@ app.get("/login", async function(req, res) {
     res.render("pages/login");
 })
 
+// var currentUser = "name";
+
 app.post("/login", async function(req, res) {
     try {
-        const user = await db.one("SELECT * FROM users WHERE username = $1 ;", [
+        // currentUser = req.body.username;
+        const user = await db.oneOrNone("SELECT * FROM users WHERE username = $1 ;", [
             req.body.username
         ])
+        //additional user info message implementations
+        if (!req.body.username || !req.body.password) {
+            throw new Error("Please input both username and password")
+        }
+        if (!user) {
+            throw new Error("User not found")
+        }
+        //
         const match = await bcrypt.compare(req.body.password, user.password);
         if (match) {
             console.log("in")
@@ -123,14 +125,61 @@ app.post("/login", async function(req, res) {
             message: error
         })
     }
-})
+}) 
 
 app.get('/welcome', (req, res) => {
     res.json({status: 'success', message: 'Welcome!'});
   });
 
-// ACCOUNT: look at your past reviews and maybe things like add a pfp
+  // Authentication Middleware. // placed after login, welcome, register, etc. pages that you should be able to get while not logged in
+const auth = (req, res, next) => {
+    if (!req.session.user) {
+      // Default to login page.
+      return res.redirect('/login');
+    }
+    next();
+  };
+  
+// Authentication Required
+app.use(auth);
 
+  
+// HOME
+app.get("/home", async function(req, res) {
+    // if (req.session.user) {
+    //     // Render the home page if the user is logged in
+    //     res.render("pages/home", { user: req.session.user });
+    // } else {
+    //     // Redirect to login if the user is not logged in
+    //     res.redirect("/login");
+    // }                                //the authentication middleware made this redundant
+
+    res.render("pages/home", { user: req.session.user });
+});
+
+app.post("/search", async function(req, res) {
+    try{
+    if (req.body.searchQuery < 1) {
+        throw new Error("Please enter a positive comic ID")
+    }
+
+    const text1 = "/comics/";
+    const entry = text1.concat(req.body.searchQuery);
+    return await res.redirect(entry);
+
+    }catch (error) {
+        console.log(error)
+        await res.render("pages/home",{
+            error: true,
+            message: error
+        })
+    }
+});
+
+// ACCOUNT: look at your past reviews and maybe things like add a pfp
+app.get("/account", async function(req, res) { //placeholder account api call
+    res.redirect("/home");
+});
 
 // FEED: feed of latest reviews from anywhere
 // marvel-api: just needed for title and image, the rest is pulled from db
@@ -143,6 +192,27 @@ app.get('/welcome', (req, res) => {
 // COMIC: look at reviews of a specific comic
 // marvel-api: title, image, the rest from the db
 // methods: GET, POST
+app.get("/comics/:id", async (req, res) => {
+    try {
+        const data = await api.specificComic(parseInt(req.params.id))
+        await res.render("pages/comic", {
+            data: data,
+            reviews: [
+                {
+                    title: "Example review",
+                    description: "Sed fugit fugiat voluptatem et adipisci et aspernatur. Vero reprehenderit sint officia mollitia dolore in debitis. Consequatur laudantium totam ad rem commodi. Error maxime inventore unde omnis odio laboriosam. Quos dignissimos quas ad ut tenetur dolo"
+                }
+            ],
+            message: "wow"
+        })
+    } catch (error) {
+        await res.render("pages/login",{
+            error: true,
+            message: error,
+            results: []
+        })
+    }
+})
 
 // Create a user logout that sends a message to confirm the user for a logout session.
 app.get("/logout", async function(req, res) {
