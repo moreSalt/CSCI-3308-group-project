@@ -1,0 +1,14 @@
+  Paul: 
+I configured the message partial, got the API working, and provied most of the backend that allows the comic ID search to happen, which will also serve as the framework for more specific comic pages -> reviews.
+
+  Jared: 
+I got the users database to be fully functional this week, and also set up the basis for the reviews database, last week I implemented logout UI/functionality, the framework for the login.
+
+  Max: 
+I have implemented the comic ID search functionality, the basis for the account page, implemented the message partial that Paul configured, added additional input checks/user feedback for incorrect inputs, configured the authentication middleware to work properly, and a few other small things.
+
+  Alexis: 
+I wrote out the 3 UAT test cases, fixed our header partial, did some debugging of routes in index.js, and more.
+
+  Noah: 
+Made a new partial called search and utilized form inside. Connected the element to the menu partial. Also connected to route /search in the index. Used boot strap to create a submit button that  can get information from the api. Boot strap to create column and row to align the header elements. Debugged the create sql that had some issue in the create table. 
