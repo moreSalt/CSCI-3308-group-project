@@ -175,10 +175,11 @@ app.post("/search", async function(req, res) {
         })
     }
 });
-  
 
 // ACCOUNT: look at your past reviews and maybe things like add a pfp
-
+app.get("/account", async function(req, res) { //placeholder account api call
+    res.redirect("/home");
+});
 
 // FEED: feed of latest reviews from anywhere
 // marvel-api: just needed for title and image, the rest is pulled from db
