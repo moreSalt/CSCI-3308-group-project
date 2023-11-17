@@ -64,14 +64,22 @@ app.get("/register", async function(req, res) {
 app.post("/register", async function(req, res) {
       try {
             const username = req.body.username;
+            if (typeof(username) !== 'string' || username.length < 4) {
+                throw new Error("username must be a string with 4+ characters")
+            }
+
+            if (typeof(req.body.password) !== 'string' || req.body.password < 8) {
+                throw new Error("password must be a string with 8+ characters")
+            }
+
             const query1 = "select * from users where users.username = $1;";
             const user = await db.oneOrNone(query1, username);
             if (user) {
-            throw new Error("Username taken")
-
+                throw new Error("Username taken")
             }
+
             if (!req.body.username || !req.body.password) {
-            throw new Error("Please input both username and password")
+                throw new Error("Please input both username and password")
             }
 
           const hash = await bcrypt.hash(req.body.password, 10)
@@ -81,7 +89,8 @@ app.post("/register", async function(req, res) {
           ])
           return await res.redirect("/login")
       } catch (error) {
-         return await res.render("pages/register",{
+            console.log(error)
+         return await res.status(401).render("pages/register",{
               error: true,
               message: error
           })
@@ -120,7 +129,7 @@ app.post("/login", async function(req, res) {
         }
     } catch (error) {
         console.log(error)
-       await res.render("pages/login",{
+       await res.status(401).render("pages/login",{
             error: true,
             message: error
         })
@@ -195,6 +204,10 @@ app.get("/account", async function(req, res) { //placeholder account api call
 app.get("/comics/:id", async (req, res) => {
     try {
         const data = await api.specificComic(parseInt(req.params.id))
+        await console.log("comic id data", data)
+        if (!data) {
+            throw new Error("marvel api did not return any data")
+        }
         await res.render("pages/comic", {
             data: data,
             reviews: [
@@ -203,14 +216,14 @@ app.get("/comics/:id", async (req, res) => {
                     description: "Sed fugit fugiat voluptatem et adipisci et aspernatur. Vero reprehenderit sint officia mollitia dolore in debitis. Consequatur laudantium totam ad rem commodi. Error maxime inventore unde omnis odio laboriosam. Quos dignissimos quas ad ut tenetur dolo"
                 }
             ],
-            message: "wow"
+            message: "this is an example message, you can remove it or add error: true if you want it to be color red"
         })
     } catch (error) {
+        console.log(error)
         await res.render("pages/login",{
-            error: true,
-            message: error,
-            results: []
-        })
+             error: true,
+             message: error
+         })
     }
 })
 

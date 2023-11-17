@@ -91,6 +91,10 @@ class MarvelAPI {
 
     async specificComic(id) {
         try {
+
+            if (parseInt(id) < 0) {
+                throw new error("Invalid comic id")
+            }
             const options = {
                 method: "GET",
                 url: `https://gateway.marvel.com/v1/public/comics/${id}`,
