@@ -1,0 +1,29 @@
+<%- include ('../partials/head') %> 
+<%- include ('../partials/menu') %>
+<%- include ('../partials/message') %>
+
+<main>
+    <div class="container">
+        <div class="d-flex justify-content-between gap-4">
+            <div class="w-50 d-flex flex-column h-100" >
+                <h1><%= locals.data.title %></h1>
+                <p>ID: <%= locals.data.id %></p>
+                <p><%= locals.data.description %></p>
+              
+            </div>
+            <img src="<%= locals.data.image %>" class="img-thumbnail w-25 rounded" alt="...">
+
+        </div>
+        <h3>Issues</h3>
+        <div class="d-flex mt-4 justify-content-between flex-wrap w-100">
+            <% for(let i = 0; i < locals.data.issues.length; i++) { %>
+                <!-- <div class="p-4 mt-4 border rounded"> -->
+                    <a href="/comics/<%= locals.data.issues[i].id %>" class="m-2 w-25 btn btn-primary"><%= locals.data.issues[i].title %></a>
+                <!-- </div> -->
+            <% } %>
+        </div>
+    </div>
+  </main>
+
+
+  <%- include ('../partials/footer') %>

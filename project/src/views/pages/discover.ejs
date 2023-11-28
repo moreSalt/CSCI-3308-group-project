@@ -1,13 +1,68 @@
-<%- include ('../partials/head') %> 
-<%- include ('../partials/menu') %>
-<%- include ('../partials/message') %>
-
-
+<%- include ('../partials/head') %> <%- include ('../partials/menu') %> <%-
+include ('../partials/message') %>
 
 <main>
-  <div class="container d-flex flex-column justify-content-center align-items-center border">
-    
+    <div
+        class="container d-flex flex-column justify-content-center align-items-center"
+    >
 
-  </div>
+    <form class="mb-3 w-50 form-floating" action="/discover" method="GET">
+        <!-- <input type="text" class="form-control" aria-label="Text input with dropdown button" placeholder="search" name="query" id="query">
+        <select class="form-select" name="mode" id="mode" style="width: 30px;">
+            <option value="titleStartsWith">Title Starts With</option>
+            <option value="startYear">Start Year</option>
+          </select>
+
+          <div>
+            <input type="text" class="form-control" aria-label="Text input with dropdown button" placeholder="search" name="query" id="query">
+
+          </div> -->
+        <!-- <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Dropdown</button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li><a class="dropdown-item" href="#">Action</a></li>
+          <li><a class="dropdown-item" href="#">Another action</a></li>
+          <li><a class="dropdown-item" href="#">Something else here</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="#">Separated link</a></li>
+        </ul> -->
+
+        <div class="form-floating mb-2">
+            <input type="text" class="form-control" id="titleStartsWith" name="titleStartsWith" placeholder="spider">
+            <label for="titleStartsWith">Title Starts With</label>
+        </div>
+
+        <div class="form-floating mb-2">
+            <input type="number" class="form-control" id="startYear" name="startYear" placeholder="2012" min="1900" max="2026">
+            <label for="startYear">Start Year</label>
+        </div>
+
+        <button class="btn btn-primary w-100" type="submit">Search</button>
+    </form>
+      
+
+    <p><%= locals.data.length %> results</p>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col"></th>
+            <th scope="col">Title</th>
+            <th scope="col">Issues</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% for (let i = 0; i < locals.data.length; i++) { %>
+
+          <tr>
+            <td><img src="<%= locals.data[i].image %>" alt="" class="img-thumbnail" style="width:64px;" ></td>
+            <td><a href="/series/<%= locals.data[i].id %>"><%= locals.data[i].title %></a></td>
+            <td><%= locals.data[i].issues.length %></td>
+          </tr>
+        <% } %>
+
+
+        </tbody>
+      </table>
+    </div>
 </main>
 <%- include ('../partials/footer') %>

@@ -9,6 +9,7 @@
                 <h1><%= locals.data.title %></h1>
                 <p>ID: <%= locals.data.id %></p>
                 <p>Average rating: <%= locals.reviews.reduce((accumulator, item) => accumulator + item.rating, 0)/locals.reviews.length %></p>
+                <p>Series: <a href="/series/<%= locals.data.seriesID %>"><%= locals.data.seriesName %></a></p>
                 <p><%= locals.data.description %></p>
                 <form action="<%= locals.meta.path %>" method="POST" class="border p-4 rounded d-flex flex-column justify-content-between gap-3 justify-self-end">
                     <h3>Create a review</h3>
