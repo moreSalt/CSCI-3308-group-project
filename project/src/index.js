@@ -193,16 +193,35 @@ app.post("/search", async function(req, res) {
     }
 });
 
-app.get("/discover", async function(req, res) {
-    // if (req.session.user) {
-    //     // Render the home page if the user is logged in
-    //     res.render("pages/home", { user: req.session.user });
-    // } else {
-    //     // Redirect to login if the user is not logged in
-    //     res.redirect("/login");
-    // }                                //the authentication middleware made this redundant
 
-    res.render("pages/discover", { user: req.session.user });
+// Find comics and also search for comics
+app.get("/discover", async function(req, res) {
+    const queries = []
+    try {
+        const keys = Object.keys(req.query)
+        for (let i =0; i < keys.length; i++) {
+            const key = keys[i]
+            const value = req.query[key]
+
+            if (!value) continue;
+
+            queries.push({
+                key: key,
+                value: value
+            })
+
+        }
+
+        if (!queries.length) queries.push({ key: "startYear", value: Math.floor(Math.random() * (2023 - 1990 + 1) + 1990) })
+        const data = await api.searchSeries(queries)
+
+        await res.render("pages/discover", { data: data, search: queries  });
+
+    } catch (error) {
+            await console.log("/discover error:", error)
+            await res.render("pages/discover", { error: true, message: error, data: [], search: queries   })
+    }
+
 });
 
 // ACCOUNT: look at your past reviews and maybe things like add a pfp
@@ -327,10 +346,31 @@ app.get("/comics/:id/:review_id/delete", async (req, res) => {
             message: error
         })
     }
+})
 
+// Fetch a series based on series_id
+app.get("/series/:id", async (req, res) => {
+    try {
 
+        // Fetch data
+        const data = await api.specificSeries(parseInt(req.params.id))
 
+        // Check to make sure there is data
+        if (!data) {
+            throw new Error("marvel api did not return any data")
+        }
 
+        // Render page
+        await res.render("pages/series", {
+            data: data,
+        })
+    } catch (error) {
+        await console.log("series/:id error:",error)
+        await res.render("pages/series",{
+             error: true,
+             message: error
+         })
+    }
 })
 
 // Create a user logout that sends a message to confirm the user for a logout session.

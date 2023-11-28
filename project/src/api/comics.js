@@ -30,6 +30,30 @@ const getData = async (data) => {
     }
 };
 
+const getSeriesData = async (data) => {
+    try {
+        return {
+            id: data.id,
+            title: data.title,
+            description: data.description,
+            image: data.thumbnail.path + "." + data.thumbnail.extension,
+            issues: data.comics.items.map(item => {
+                return {
+                    id: item.resourceURI.split("http://gateway.marvel.com/v1/public/comics/")[1],
+                    title: item.name
+                }
+            })
+
+        }
+    } catch (error) {
+        console.log(
+            `Error converting series data to formatted data: ${data.id}`,
+            error.message
+        );
+        return;
+    }
+}
+
 
 
 class MarvelAPI {
@@ -37,7 +61,7 @@ class MarvelAPI {
         this.apiKey = apiKey;
         this.defaultParams = {
             apikey: this.apiKey,
-            limit: 20,
+            limit: 100,
         };
         this.headers = {
             "User-Agent":
@@ -56,6 +80,7 @@ class MarvelAPI {
         };
     }
 
+    // params: interface[] { key: string, value: string}
     async searchComics(params) {
         try {
             const options = {
@@ -75,6 +100,42 @@ class MarvelAPI {
 
             for (let i = 0; i < res.data.data.results.length; i++) {
                 const returnData = await getData(res.data.data.results[i]);
+
+                if (!returnData) {
+                    continue;
+                }
+
+                data.push(returnData);
+            }
+            return data;
+        } catch (error) {
+            console.log("Error searching comics:", error.message);
+            console.log(error);
+        }
+    }
+
+    // params: interface[] { key: string, value: string}
+    async searchSeries(params) {
+        try {
+            const options = {
+                method: "GET",
+                url: `https://gateway.marvel.com/v1/public/series`,
+                params: this.defaultParams,
+                headers: this.headers,
+            };
+
+            for (let i = 0; i < params.length; i++) {
+                options.params[params[i].key] = params[i].value;
+            }
+
+
+
+            const res = await axios.request(options);
+
+            const data = [];
+
+            for (let i = 0; i < res.data.data.results.length; i++) {
+                const returnData = await getSeriesData(res.data.data.results[i]);
 
                 if (!returnData) {
                     continue;
@@ -111,7 +172,34 @@ class MarvelAPI {
             }
             return returnData;
         } catch (error) {
-            console.log("Error specific", error.message);
+            console.log("Error specific comic", error.message);
+        }
+    }
+
+    async specificSeries(id) {
+        try {
+
+            if (parseInt(id) < 0) {
+                throw new error("Invalid series id")
+            }
+            const options = {
+                method: "GET",
+                url: `https://gateway.marvel.com/v1/public/series/${id}`,
+                params: this.defaultParams,
+                headers: this.headers,
+            };
+
+
+            const res = await axios.request(options);
+
+            const returnData = await getSeriesData(res.data.data.results[0]);
+
+            if (!returnData) {
+                throw new Error("no data");
+            }
+            return returnData;
+        } catch (error) {
+            console.log("Error specific series", error.message);
         }
     }
 }
