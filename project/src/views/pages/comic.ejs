@@ -5,18 +5,49 @@
 <main>
     <div class="container">
         <div class="d-flex justify-content-between gap-4">
-            <img src="<%= locals.data.image %>" class="img-thumbnail w-25 rounded" alt="...">
-            <div>
+            <div class="w-50 d-flex flex-column h-100" >
                 <h1><%= locals.data.title %></h1>
+                <p>ID: <%= locals.data.id %></p>
+                <p>Average rating: <%= locals.reviews.reduce((accumulator, item) => accumulator + item.rating, 0)/locals.reviews.length %></p>
                 <p><%= locals.data.description %></p>
+                <form action="<%= locals.meta.path %>" method="POST" class="border p-4 rounded d-flex flex-column justify-content-between gap-3 justify-self-end">
+                    <h3>Create a review</h3>
+                    <!-- DESCRIPTION -->
+                    <div class="form-floating">
+                        <textarea class="form-control" placeholder="Leave a review here" id="floatingTextarea2" style="height: 100px" id="review" name="review" maxlength="256"></textarea>
+                        <label for="review">Review</label>
+                    </div>
+
+                    <!-- RATING -->
+                    <div class="w-25">
+                        <label for="rating" class="form-label">Rating</label>
+                        <input type="number" max="5" min="0" id="rating" name="rating" class="form-control">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Submit</button>
+
+                </form>
             </div>
+            <img src="<%= locals.data.image %>" class="img-thumbnail w-25 rounded" alt="...">
+
         </div>
 
-        <div class="d-flex gap-4 mt-4 p-4 rounded bg-secondary text-light">
+        <div class="d-flex flex-column mt-4">
             <% for(let i = 0; i < locals.reviews.length; i++) { %>
-                <div>
-                    <h3><%= locals.reviews[i].title %></h3>
-                    <p><%= locals.reviews[i].description %></p>
+                <div class="p-4 mt-4 border rounded">
+                    <!-- <h3> <%= locals.reviews[i].rating %>/5</h3>
+                     -->
+                    <div class="d-flex flex-row w-50">
+                        <p><span class="fw-bolder">Rating:</span> <%= locals.reviews[i].rating || 0 %></p>
+                        <p class="mx-4"><span class="fw-bolder">User:</span> <%= locals.reviews[i].username || 0 %></p>
+                    </div>
+                    <!-- <p><%= JSON.stringify(locals.meta) %></p> -->
+                    <p><%= locals.reviews[i].review %></p>
+                    <% if (locals.user.username === locals.reviews[i].username) { %>
+                        <form action="<%= locals.meta.path %>/<%= locals.reviews[i].id %>/delete" method="GET">
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                    <% } %>
                 </div>
             <% } %>
         </div>

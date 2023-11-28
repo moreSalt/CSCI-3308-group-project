@@ -46,6 +46,14 @@ app.use(
     })
 );
 
+app.use(function(req, res, next) {
+    res.locals.user = req.session.user;
+    res.locals.meta = {
+        path: req.path
+    }
+    next();
+  });
+
 const api = new MarvelAPI(process.env.MARVEL_API_KEY)
 // ********************
 // ROUTES
@@ -185,6 +193,18 @@ app.post("/search", async function(req, res) {
     }
 });
 
+app.get("/discover", async function(req, res) {
+    // if (req.session.user) {
+    //     // Render the home page if the user is logged in
+    //     res.render("pages/home", { user: req.session.user });
+    // } else {
+    //     // Redirect to login if the user is not logged in
+    //     res.redirect("/login");
+    // }                                //the authentication middleware made this redundant
+
+    res.render("pages/discover", { user: req.session.user });
+});
+
 // ACCOUNT: look at your past reviews and maybe things like add a pfp
 app.get("/account", async function(req, res) { //placeholder account api call
     res.redirect("/home");
@@ -204,36 +224,124 @@ app.get("/account", async function(req, res) { //placeholder account api call
 app.get("/comics/:id", async (req, res) => {
     try {
         const data = await api.specificComic(parseInt(req.params.id))
-        await console.log("comic id data", data)
         if (!data) {
             throw new Error("marvel api did not return any data")
         }
+
+        const reviews = await db.any("SELECT * FROM reviews WHERE comic_id = $1 ;", [
+            parseInt(req.params.id)
+        ])
+
+        await console.log(reviews)
         await res.render("pages/comic", {
             data: data,
-            reviews: [
-                {
-                    title: "Example review",
-                    description: "Sed fugit fugiat voluptatem et adipisci et aspernatur. Vero reprehenderit sint officia mollitia dolore in debitis. Consequatur laudantium totam ad rem commodi. Error maxime inventore unde omnis odio laboriosam. Quos dignissimos quas ad ut tenetur dolo"
-                }
-            ],
-            message: "this is an example message, you can remove it or add error: true if you want it to be color red"
+            reviews: reviews,
+            // message: "this is an example message, you can remove it or add error: true if you want it to be color red"
         })
     } catch (error) {
         console.log(error)
-        await res.render("pages/login",{
+        await res.render("/",{
              error: true,
              message: error
          })
     }
 })
 
+app.post("/comics/:id", async (req, res) => {
+    try {
+        const data = await api.specificComic(parseInt(req.params.id))
+        if (!data) {
+            throw new Error("marvel api did not return any data")
+        }
+
+
+
+        const user = req.session.user
+        if (!user || !user.username) throw new Error("Login required to post a review")
+
+
+        const {review, rating} =  req.body
+        if (review.length > 256) throw new Error("Review must be less than 256 characters")
+        if (rating < 0 || rating > 5) throw new Error("Rating must be between 0 and 5")
+
+        const checkIfAlreadyReviewed = await db.any("SELECT * from reviews WHERE comic_id = $1 and username = $2", [
+            parseInt(req.params.id),
+            user.username
+        ])
+
+        if (checkIfAlreadyReviewed.length > 0) throw new Error("Only 1 review per comic per user is allowed")
+
+        let reviews = await db.any("INSERT INTO reviews(comic_id, review, rating, username) VALUES ($1, $2, $3, $4) returning * ;", [
+            parseInt(req.params.id),
+            review,
+            rating,
+            user.username
+        ])
+
+        await res.redirect(`/comics/${req.params.id}`)
+
+        // INSERT INTO reviews(comic_id, review, rating, username) VALUES (502, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit', 3, 'admin');
+
+
+    } catch (error) {
+        console.log("Error posting review:", error)
+        await res.render("pages/home", {
+            error: true,
+            message: error
+        })
+    }
+})
+
+app.get("/comics/:id/:review_id/delete", async (req, res) => {
+
+    try {
+        const user = req.session.user
+        if (!user || !user.username) throw new Error("Login required to post a review")
+        
+        const data = await api.specificComic(parseInt(req.params.id))
+        if (!data) {
+            throw new Error("marvel api did not return any data")
+        }
+    
+        const review = await db.any("SELECT * from reviews WHERE id = $1", [
+            parseInt(req.params.review_id),
+        ])
+    
+        if (review.length === 0) throw new Error("Could not find any reviews with that id")
+
+        if (review[0].username !== user.username) throw new Error("You cannot delete someone elses review")
+    
+        const reviews = await db.any("DELETE from reviews WHERE id = $1 returning *;", [
+            parseInt(req.params.review_id),
+        ])
+        await res.redirect(`/comics/${req.params.id}`)
+        // await res.render("pages/comic", {
+        //     data: data,
+        //     reviews: reviews,
+        //     message: "Deleted your review"
+        // })
+    } catch (error) {
+        console.log("Error deleting review:", error)
+        await res.render("pages/home", {
+            error: true,
+            message: error
+        })
+    }
+
+
+
+
+})
+
 // Create a user logout that sends a message to confirm the user for a logout session.
 app.get("/logout", async function(req, res) {
     try {
       await req.session.destroy()
+
       return await res.render("pages/login", {
         error: false,
-        message: "Logged out Successfully"
+        message: "Logged out Successfully",
+        user: null
       })
   
     } catch (error) {
