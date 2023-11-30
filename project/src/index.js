@@ -224,9 +224,20 @@ app.get("/discover", async function(req, res) {
 
 });
 
-// ACCOUNT: look at your past reviews and maybe things like add a pfp
-app.get("/account", async function(req, res) { //placeholder account api call
-    res.redirect("/home");
+// ACCOUNT: change profile picture, username or password
+app.get("/account", async function(req, res) {
+    // Perform any necessary operations, like fetching user data
+    // For example, if you have user data in req.user or similar, you can pass it to your EJS template
+
+    // Assuming you have user data, it could look something like this:
+    // const userData = await getUserData(req.user);
+
+    // Now, render the account.ejs page, potentially passing in any user data
+    res.render("pages/account", { 
+        user: req.session.user 
+         // userData: userData
+        // You can pass any additional data your EJS page might need here
+    });
 });
 
 // FEED: feed of latest reviews from anywhere
