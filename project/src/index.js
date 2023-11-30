@@ -240,6 +240,86 @@ app.get("/account", async function(req, res) {
     });
 });
 
+// Middleware to protect the routes and ensure user is authenticated
+const isAuthenticated = (req, res, next) => {
+    if (!req.session.user) {
+        return res.redirect('/login');
+    }
+    next();
+};
+
+// Change Username
+app.post('/change-username', isAuthenticated, async (req, res) => {
+    const newUsername = req.body.newUsername.trim();
+    const oldUsername = req.session.user.username; // Use the username from the session
+
+    try {
+        if (typeof(newUsername) !== 'string' || newUsername.length < 4) {
+            throw new Error("Username must be a string with 4+ characters.");
+        }
+
+        // Check if new username is taken
+        const userCheck = await db.oneOrNone('SELECT username FROM users WHERE username = $1', newUsername);
+        if (userCheck) {
+            throw new Error("Username is already taken.");
+        }
+
+        // Begin transaction to update username
+        await db.tx(async t => {
+            // Update reviews table first to maintain foreign key relationship
+            await t.none('UPDATE reviews SET username = $1 WHERE username = $2', [newUsername, oldUsername]);
+
+            // Update groups table if username is used there
+            await t.none('UPDATE groups SET username = $1 WHERE username = $2', [newUsername, oldUsername]);
+
+            // Update users table
+            await t.none('UPDATE users SET username = $1 WHERE username = $2', [newUsername, oldUsername]);
+        });
+
+        // Update the session with the new username
+        req.session.user.username = newUsername;
+        req.session.save();
+
+        res.redirect('/account');
+    } catch (error) {
+        console.error(error);
+        res.render('pages/account', { error: true, message: error.message });
+    }
+});
+
+// Change Password
+app.post('/change-password', isAuthenticated, async (req, res) => {
+    const { currentPassword, newPassword } = req.body;
+    const username = req.session.user.username; // Use username instead of id
+
+    try {
+        if (typeof(newPassword) !== 'string' || newPassword.length < 8) {
+            throw new Error("New password must be a string with 8+ characters.");
+        }
+
+        // Fetch the user's current hashed password from the database
+        const user = await db.one('SELECT password FROM users WHERE username = $1', username);
+
+        // Verify the current password
+        const match = await bcrypt.compare(currentPassword, user.password);
+        if (!match) {
+            throw new Error("Current password is incorrect.");
+        }
+
+        // Hash the new password
+        const hash = await bcrypt.hash(newPassword, 10);
+
+        // Update the password in the database using the username
+        await db.none('UPDATE users SET password = $1 WHERE username = $2', [hash, username]);
+
+        res.redirect('/account');
+    } catch (error) {
+        console.error(error);
+        res.render('pages/account', { error: true, message: error.message });
+    }
+});
+
+
 // FEED: feed of latest reviews from anywhere
 // marvel-api: just needed for title and image, the rest is pulled from db
 // methods: get
