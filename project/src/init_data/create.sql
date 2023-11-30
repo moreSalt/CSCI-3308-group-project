@@ -41,3 +41,17 @@ CREATE TABLE IF NOT EXISTS reviews(
     username VARCHAR(16) NOT NULL,
     ts timestamp default current_timestamp
 );
+
+CREATE TABLE IF NOT EXISTS groups(
+    id VARCHAR(32) PRIMARY KEY,
+    about VARCHAR(256) NOT NULL,
+    username VARCHAR(16) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS messages(
+    id SERIAL PRIMARY KEY,
+    content varchar(256) NOT NULL,
+    username varchar(16) NOT NULL,
+    group_id varchar(32) NOT NULL,
+    ts timestamp default current_timestamp
+);

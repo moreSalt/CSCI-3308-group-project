@@ -373,6 +373,141 @@ app.get("/series/:id", async (req, res) => {
     }
 })
 
+// Search through all of the groups
+app.get("/groups", async (req, res) => {
+    try {
+        const groups = await db.any("SELECT * FROM groups;")
+        await res.render('pages/groups', {
+            groups: groups
+        })
+    } catch (error) {
+        await console.log("Error in groups", error)
+        await res.render("pages/groups", {
+            groups: [],
+            error: true,
+            message: error
+        })
+
+    }
+})
+
+app.post("/groups", async (req, res) => {
+    try {
+        await console.log(req.body)
+        let regex = new RegExp("^[A-Za-z0-9_-]*$");
+        const validName = regex.test(req.body.name)
+        if (!validName) throw new Error("Names must be alphanumeric or -, _. No spaces or characters")
+
+     
+        if (!req.session.user || !req.session.user.username) throw new Error("Must be logged in to do that")
+        if (
+            req.body.name.length > 32 ||
+            !req.body.name ||
+            !req.body.about || 
+            req.body.about.length > 256
+        ) throw new Error("Invalid about or name")
+
+
+
+        const data = [
+            req.body.name,
+            req.body.about,
+            req.session.user.username
+
+        ]
+        const group = await db.one("INSERT INTO groups(id, about, username) VALUES ($1, $2, $3) returning *;", data)
+
+        await console.log(group)
+
+
+        await res.redirect("/groups")
+    } catch (error) {
+        await console.log("Error in groups", error)
+        await res.render("pages/groups", {
+            groups: [],
+            error: true,
+            message: error
+        })
+    }
+})
+
+// Look at a group, and be able to chat with others
+app.get("/groups/:id", async (req, res) => {
+    try {
+        const messages = await db.any("SELECT * FROM messages WHERE group_id = $1;", [
+            req.params.id
+        ])
+
+        const group = await db.oneOrNone("SELECT * FROM groups WHERE id = $1;", [
+            req.params.id
+        ])
+
+        await res.render('pages/group', {
+            messages: messages,
+            group: group
+        })
+    } catch (error) {
+        await console.log("Error in groups", error)
+        await res.render("pages/group", {
+            messages: [],
+            group: null,
+            error: true,
+            message: error
+        })
+
+    }
+})
+
+// Submit a message
+app.post("/groups/:id/messages", async (req, res) => {
+    try {
+        if (!req.params.id || !req.body.content) throw new Error("Invalid message")
+
+        const data = [
+            req.body.content,
+            req.session.user.username,
+            req.params.id
+
+        ]
+        const message = await db.any("INSERT INTO messages(content, username, group_id) VALUES ($1, $2, $3) returning *;", data)
+
+        await res.redirect("/groups/" + req.params.id)
+    // INSERT INTO messages(content, username, group_id) VALUES ('Welcome all to Marvel Comic Reviews!', 'admin', 'Welcome');
+
+    } catch (error) {
+        await console.log("Error submitting message", error)
+        await res.redirect("/groups/" + req.params.id)
+        
+    }
+})
+
+app.post("/groups/:id/messages/delete", async (req, res) => {
+    try {
+        const message = await db.any("SELECT * from messages WHERE id = $1;", [
+            parseInt(req.body.messageId)
+        ])
+
+        if (!message.length) throw new Error("Message id does not exist")
+
+        const group = await db.any("SELECT * from groups WHERE id = $1;", [req.params.id]);
+        if (!group.length) throw new Error("Message does not contain a valid group id")
+   
+        if (message[0].username !== req.session.user.username && req.session.user.username !== group[0].username) throw new Error("You can't delete another users message")
+
+        const query = await db.any("DELETE from messages WHERE id = $1 returning *;", [
+            parseInt(req.body.messageId)
+        ])
+
+        await res.redirect("/groups/" + req.params.id)
+
+     } catch (error) {
+        await console.log("Error deleting message", error)
+
+        await res.redirect("/groups/" + req.params.id)
+        
+    }
+})
+
 // Create a user logout that sends a message to confirm the user for a logout session.
 app.get("/logout", async function(req, res) {
     try {
