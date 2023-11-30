@@ -240,8 +240,6 @@ app.get("/account", async function(req, res) {
     });
 });
 
-
-
 // FEED: feed of latest reviews from anywhere
 // marvel-api: just needed for title and image, the rest is pulled from db
 // methods: get
