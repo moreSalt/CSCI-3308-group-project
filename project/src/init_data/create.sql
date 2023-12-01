@@ -35,9 +35,10 @@ CREATE TABLE IF NOT EXISTS users(
 -- For Reviews have users_id with the text, rating, and date
 CREATE TABLE IF NOT EXISTS reviews(
     id SERIAL PRIMARY KEY,
-    comic_id INT NOT NULL,
+ --   comic_id INT NOT NULL,
+    title VARCHAR(250) NOT NULL,
     review VARCHAR(256) NOT NULL,
-    rating INT NOT NULL,
+    rating INT NOT NULL,     
     username VARCHAR(16) NOT NULL,
     ts timestamp default current_timestamp
 );
@@ -55,3 +56,14 @@ CREATE TABLE IF NOT EXISTS messages(
     group_id varchar(32) NOT NULL,
     ts timestamp default current_timestamp
 );
+-- Comics 
+CREATE TABLE IF NOT EXISTS comics(
+    comic_id INT NOT NULL PRIMARY KEY,
+    comic_name TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS review_comics(
+    review_id INT NOT NULL REFERENCES reviews(id),
+    comic_id INT NOT NULL REFERENCES comics(comic_id),
+    PRIMARY KEY (comic_id, review_id)
+);
+

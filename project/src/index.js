@@ -170,8 +170,8 @@ app.get("/home", async function(req, res) {
     //     // Redirect to login if the user is not logged in
     //     res.redirect("/login");
     // }                                //the authentication middleware made this redundant
-
-    res.render("pages/home", { user: req.session.user });
+    const reviews = await db.any("SELECT r.review, r.rating,c.comic_name,r.username, r.title FROM comics c INNER JOIN review_comics rc ON c.comic_id = rc.comic_id INNER JOIN reviews r ON rc.review_id = r.id")
+    res.render("pages/home", { user: req.session.user,reviews});
 });
 
 app.post("/search", async function(req, res) {
@@ -336,8 +336,9 @@ app.get("/comics/:id", async (req, res) => {
         if (!data) {
             throw new Error("marvel api did not return any data")
         }
+        
 
-        const reviews = await db.any("SELECT * FROM reviews WHERE comic_id = $1 ;", [
+        const reviews = await db.any("SELECT r.review, r.rating,c.comic_name,r.username, r.title FROM comics c INNER JOIN review_comics rc ON c.comic_id = rc.comic_id INNER JOIN reviews r ON rc.review_id = r.id  WHERE rc.comic_id = $1 ;", [
             parseInt(req.params.id)
         ])
 
@@ -360,7 +361,7 @@ app.post("/comics/:id", async (req, res) => {
     try {
         const data = await api.specificComic(parseInt(req.params.id))
         if (!data) {
-            throw new Error("marvel api did not return any data")
+            throw new Error("Marvel api did not return any data")
         }
 
 
@@ -369,22 +370,35 @@ app.post("/comics/:id", async (req, res) => {
         if (!user || !user.username) throw new Error("Login required to post a review")
 
 
-        const {review, rating} =  req.body
+        const {review, rating,title} =  req.body //added title to review
         if (review.length > 256) throw new Error("Review must be less than 256 characters")
         if (rating < 0 || rating > 5) throw new Error("Rating must be between 0 and 5")
 
-        const checkIfAlreadyReviewed = await db.any("SELECT * from reviews WHERE comic_id = $1 and username = $2", [
+        const checkIfAlreadyReviewed = await db.any("SELECT r.review, r.rating,c.comic_name,r.username, r.title FROM comics c INNER JOIN review_comics rc ON c.comic_id = rc.comic_id INNER JOIN reviews r ON rc.review_id = r.id WHERE rc.comic_id = $1 and r.username = $2", [
             parseInt(req.params.id),
             user.username
         ])
 
         if (checkIfAlreadyReviewed.length > 0) throw new Error("Only 1 review per comic per user is allowed")
-
-        let reviews = await db.any("INSERT INTO reviews(comic_id, review, rating, username) VALUES ($1, $2, $3, $4) returning * ;", [
-            parseInt(req.params.id),
+ //removed the comic id due to table change 
+        let reviews = await db.any("INSERT INTO reviews(review, rating, username,title) VALUES ($1, $2, $3, $4) returning * ;", [
+            //parseInt(req.params.id), not using the comic id anymore
             review,
             rating,
-            user.username
+            user.username,
+            title
+        ])
+        //command for new table comics 
+        await db.any("INSERT INTO comics(comic_id, comic_name) VALUES ($1, $2) ON CONFLICT DO NOTHING;", [ //when conflict occures it just skips it 
+            parseInt(req.params.id),
+            data.title
+            
+        ])
+        await db.any("INSERT INTO review_comics(review_id, comic_id) VALUES ($1, $2) ;", [ //when conflict occures it just skips it 
+            reviews[0].id,
+            parseInt(req.params.id)
+            
+            
         ])
 
         await res.redirect(`/comics/${req.params.id}`)
@@ -611,4 +625,6 @@ app.get("/logout", async function(req, res) {
         })
     }
   })
+
+
 module.exports = app.listen(3000);
