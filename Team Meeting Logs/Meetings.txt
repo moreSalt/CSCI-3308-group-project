@@ -7,13 +7,13 @@ There will be a feed of random comics (each has ratings and comments with/ time 
 Re-designed wireframe for the app
 Formatted repo with folder structure frame
 
-Meeting Varsha 09 November 2023 from 12:00 PM - 12:15 PM.
+Meeting with Varsha, 09 November 2023 from 12:00 PM - 12:15 PM.
 All Members Present.
 Points Taking Off 27.5/ 35:
 Tasks are present on Icebox, not everyone has a task assigned to them on the project board. 2.5/5 Points
 Release notes have been updated for the week 0/5 Points
 
-Meeting with Team 13 November 2023 at 4:00 PM - 4:30 PM. 
+Meeting with Team, 13 November 2023 at 4:00 PM - 4:30 PM. 
 All Members Present. 
 Discussed roles with the team for the following week, 
 the possibilities of working on the project over break and availability over break, 
@@ -22,20 +22,20 @@ future individual project piece preference,
 We will implement a search, the UI for the Home and account pages,
 possibly the UI for the login and registration pages, set up more text input checks, 
 
-Meeting Varsha 16 November 2023. 12:00 PM - 12:15 PM.
+Meeting with Varsha, 16 November 2023. 12:00 PM - 12:15 PM.
 All Members present.  
 Discussed the need for something beyond the typical review site, we are currently looking into discussion group pages
 Discussed new features added, which are reflected on the project board
 Went over some new functionality and explained current status on current project board stories
 
-Meting during recitation 17 November 2023  at 10:30 - 11:00
+Meting during recitation, 17 November 2023  at 10:30 - 11:00
 All Members present.  
 Reviewed what we went over the previous meetings, and mostly worked on our different pieces of the project while
 conferring with the others when we needed to. 
 Reaffirmed reviews and likes database framework, as well as each person's role in the coming week or 2
 Agreed to stay in contact to ensure the project moves along over break
 
-Meting during recitation 28 November 2023  at 9:00 PM - 9: 30
+Meting with Team, 28 November 2023  at 9:00 PM - 9: 30
 All Members present.
 Reviewed what we went over the previous meetings, and mostly worked on our different pieces of the project while
 conferring with the others when we needed to. 
@@ -43,4 +43,6 @@ Assigned everyone's responsiblities for the rest of the semester and before Vars
 
 Meeting Varsha 30 November 2023 at 12:00 PM - 12:15 PM 
 All Members present.
-Discussed all features that were live.
+Discussed all features that were live, discover, groups (minus socket i/o), account page, review creation, and comic book navigation.
+Plans for finishing the feed, both UI and back-end functionality, well within time limit and scope of the project were established.
+Responsibilities for next week mostly include polishing the website's functionality, and UI components in various ways, such as increasing user readability, making sure database inputs are properly sanitized, preventing user actions that would be harmful to the site in one way or another, and more.
