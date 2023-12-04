@@ -170,7 +170,8 @@ app.get("/home", async function(req, res) {
     //     // Redirect to login if the user is not logged in
     //     res.redirect("/login");
     // }                                //the authentication middleware made this redundant
-    const reviews = await db.any("SELECT r.review, r.rating,c.comic_name,r.username, r.title FROM comics c INNER JOIN review_comics rc ON c.comic_id = rc.comic_id INNER JOIN reviews r ON rc.review_id = r.id")
+
+    const reviews = await db.any("SELECT c.comic_id, r.review, r.rating,c.comic_name,r.username, r.title FROM comics c INNER JOIN review_comics rc ON c.comic_id = rc.comic_id INNER JOIN reviews r ON rc.review_id = r.id")
     res.render("pages/home", { user: req.session.user,reviews});
 });
 
@@ -338,7 +339,7 @@ app.get("/comics/:id", async (req, res) => {
         }
         
 
-        const reviews = await db.any("SELECT r.review, r.rating,c.comic_name,r.username, r.title FROM comics c INNER JOIN review_comics rc ON c.comic_id = rc.comic_id INNER JOIN reviews r ON rc.review_id = r.id  WHERE rc.comic_id = $1 ;", [
+        const reviews = await db.any("SELECT r.id, r.review, r.rating,c.comic_name,r.username, r.title FROM comics c INNER JOIN review_comics rc ON c.comic_id = rc.comic_id INNER JOIN reviews r ON rc.review_id = r.id  WHERE rc.comic_id = $1 ;", [
             parseInt(req.params.id)
         ])
 

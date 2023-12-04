@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS comics(
     comic_name TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS review_comics(
-    review_id INT NOT NULL REFERENCES reviews(id),
+    review_id INT NOT NULL REFERENCES reviews(id) ON DELETE CASCADE,
     comic_id INT NOT NULL REFERENCES comics(comic_id),
     PRIMARY KEY (comic_id, review_id)
 );
