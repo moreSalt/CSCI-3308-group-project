@@ -1,23 +1,61 @@
-<%- include ('../partials/head') %> 
-<%- include ('../partials/menu') %>
+<%- include ('../partials/head') %>
+    <%- include ('../partials/menu') %>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Page</title>
-</head>
-<body>
-    <!-- <h1>Welcome to Marvel Comic Reviews</h1> -->
-    <div class = "col">
-        <%- include ('../partials/message') %>
-        </div>
-    <div class="col-auto">
-        <%- include ('../partials/search') %>
-        </div>
-    
+        <!DOCTYPE html>
+        <html lang="en">
 
-</body>
-</html>
-<%- include ('../partials/footer') %> 
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Home Page</title>
+        </head>
+
+        <body>
+            <!-- <h1>Welcome to Marvel Comic Reviews</h1> -->
+            <div class="col">
+                <%- include ('../partials/message') %>
+            </div>
+            <div class="col-auto">
+                <%- include ('../partials/search') %>
+            </div>
+
+            <div class="container">
+                <% reviews.forEach((review)=>{  %>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="container ">
+                            <div class="row">
+                                <div class="col">
+                                    <h3 class="card-title"><%= review.title %></h3>
+                                </div>
+                                <div class="col-7">
+
+                                </div>
+                                <div class="col">
+                                    <div class="row">
+                                        <h6 class="card-title text-end">Comic: <%= review.comic_name %></h6>
+                                    </div>
+                                    <div class="row">
+                                        <h6 class="card-title text-end"> @<%= review.username %></h6>
+                                    </div>
+                                    <div class="row">
+                                        <h6 class="card-title text-end">Rating: <%= review.rating %></h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="card-text"><%= review.review %></p>
+                        <a href="/comics/<%= review.comic_id %>" class="btn btn-primary">Check it out</a>
+                    </div>
+                </div>
+            <% }) %>
+
+            </div>
+
+
+
+
+        </body>
+
+        </html>
+        <%- include ('../partials/footer') %>
