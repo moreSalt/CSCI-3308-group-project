@@ -4,6 +4,9 @@
 
 <main>
     <div class="container">
+
+
+        <% if (locals.data && locals.data.title) { %>
         <div class="d-flex justify-content-between gap-4">
             <div class="w-50 d-flex flex-column h-100" >
                 <h1><%= locals.data.title %></h1>
@@ -41,15 +44,17 @@
         <div class="d-flex flex-column mt-4 mb-52">
             <% for(let i = 0; i < locals.reviews.length; i++) { %>
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-body w-100">
                         <div class="container ">
-                            <div class="row">
-                                <div class="col">
-                                    <h3 class="card-title"><%= reviews[i].title %></h3>
-                                </div>
-                                <div class="col-7">
+                            <div class="row w-100">
 
+
+                                <div class="col w-100">
+                                    <h3 class="card-title w-100 border"><%= reviews[i].title %></h3>
                                 </div>
+
+                                <div class="col-7"></div>
+
                                 <div class="col">
                                     <div class="row">
                                         <h6 class="card-title text-end">Comic: <%= reviews[i].comic_name %></h6>
@@ -61,6 +66,9 @@
                                         <h6 class="card-title text-end">Rating: <%= reviews[i].rating %></h6>
                                     </div>
                                 </div>
+
+
+
                             </div>
                         </div>
                         <p class="card-text"><%= reviews[i].review %></p>
@@ -69,6 +77,11 @@
                 </div>
             <% } %>
         </div>
+
+        <% } else { %>
+            
+            <p>There was an error please refresh</p>
+        <% } %>
    
     </div>
   </main>

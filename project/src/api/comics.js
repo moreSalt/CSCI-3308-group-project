@@ -86,7 +86,7 @@ class MarvelAPI {
             const options = {
                 method: "GET",
                 url: `https://gateway.marvel.com/v1/public/comics`,
-                params: this.defaultParams,
+                params: JSON.parse(JSON.stringify(this.defaultParams)),
                 headers: this.headers,
             };
 
@@ -117,10 +117,12 @@ class MarvelAPI {
     // params: interface[] { key: string, value: string}
     async searchSeries(params) {
         try {
+
+
             const options = {
                 method: "GET",
                 url: `https://gateway.marvel.com/v1/public/series`,
-                params: this.defaultParams,
+                params: JSON.parse(JSON.stringify(this.defaultParams)),
                 headers: this.headers,
             };
 
@@ -150,6 +152,7 @@ class MarvelAPI {
         }
     }
 
+    // Get a specific comic based on id: number
     async specificComic(id) {
         try {
 
@@ -176,6 +179,7 @@ class MarvelAPI {
         }
     }
 
+    // Get a specific comic series based on id: number
     async specificSeries(id) {
         try {
 
