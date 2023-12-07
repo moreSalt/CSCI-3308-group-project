@@ -2,9 +2,14 @@
     "name": "final-project",
     "main": "index.js",
     "dependencies": {
+        "@feathersjs/express": "^5.0.12",
+        "@feathersjs/feathers": "^5.0.12",
+        "@feathersjs/socketio": "^5.0.12",
         "axios": "^1.1.3",
         "bcrypt": "^5.1.0",
         "body-parser": "1.20.0",
+        "cookie": "^0.6.0",
+        "cookie-parser": "^1.4.6",
         "dotenv": "^16.3.1",
         "ejs": "^3.1.8",
         "ejs-lint": "^0.3.0",
@@ -19,7 +24,6 @@
         "dev": "nodemon server.js",
         "test": "mocha",
         "testandrun": "npm run prestart && npm start"
-      
     },
     "devDependencies": {
         "chai": "^4.3.10",

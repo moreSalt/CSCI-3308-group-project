@@ -1,5 +1,13 @@
-const express = require('express'); // To build an application server or API
-const app = express();
+const feathers = require("@feathersjs/feathers");
+const express = require("@feathersjs/express");
+const socketio = require("@feathersjs/socketio");
+
+const cookieParser = require('cookie-parser');
+const cookie = require('cookie');
+
+
+
+
 const pgp = require('pg-promise')(); // To connect to the Postgres DB from the node server
 const bodyParser = require('body-parser');
 const session = require('express-session'); // To set the session object. To store or access session data, use the `req.session`, which is (generally) serialized as JSON by the store.
@@ -27,9 +35,11 @@ db.connect()
     console.log('ERROR:', error.message || error);
 });
 
+const app = express(feathers());
 app.set('view engine', 'ejs'); // set the view engine to EJS
-app.use(bodyParser.json()); // specify the usage of JSON for parsing request body.
-
+app.use(express.json()); // specify the usage of JSON for parsing request body.
+app.configure(socketio());
+app.configure(express.rest());
 // initialize session variables
 app.use(
     session({
@@ -53,6 +63,12 @@ app.use(function(req, res, next) {
     }
     next();
   });
+
+  app.use(function (req, res, next) {
+    req.feathers.fromMiddleware = 'Hello world'
+    next()
+  })
+
 
 const api = new MarvelAPI(process.env.MARVEL_API_KEY)
 // ********************
@@ -128,9 +144,19 @@ app.post("/login", async function(req, res) {
         //
         const match = await bcrypt.compare(req.body.password, user.password);
         if (match) {
-            console.log("in")
-            req.session.user = user;
+            req.session.user = {sid: req.sessionID, ...user}
             req.session.save()
+            const updateUser = await db.oneOrNone("UPDATE users SET sid = $1 WHERE username = $2 RETURNING *;", [
+                req.sessionID,
+                req.body.username
+            ])
+
+            if (!updateUser) {
+                res.redirect("/logout")
+            }
+
+            req.session.user.sid = req.sessionID
+
             res.redirect("/home")
         } else {
             throw new Error("Invalid username/password")
@@ -481,6 +507,13 @@ app.get("/series/:id", async (req, res) => {
 // Route handler to get all groups
 app.get("/groups", async (req, res) => {
     try {
+
+
+
+
+
+
+
         // Query the database to get all groups
         const groups = await db.any("SELECT * FROM groups;");
         // Render the groups page with the list of groups
@@ -559,51 +592,115 @@ app.get("/groups/:id", async (req, res) => {
     }
 });
 
-// Route handler to post a message in a group
-app.post("/groups/:id/messages", async (req, res) => {
+
+// socket x feathers x express websocket. 
+
+// Parse session id from cookie and then check it against users
+async function getSID(cookies) {
     try {
-        // Validate the message and group ID
-        if (!req.params.id || !req.body.content) throw new Error("Invalid message");
-
-        // Insert the new message into the database
-        const data = [req.body.content, req.session.user.username, req.params.id];
-        const message = await db.any("INSERT INTO messages(content, username, group_id) VALUES ($1, $2, $3) returning *;", data);
-
-        // Redirect back to the group page
-        await res.redirect("/groups/" + req.params.id);
+        const cookieString = cookies
+        if (!cookieString) throw new Error("Could not find cookie")
+        const cookieParsed = cookie.parse(cookieString)
+        if (!cookieParsed["connect.sid"]) throw new Error("Invalid cookie")
+        const cooked = cookieParser.signedCookie(cookieParsed["connect.sid"], process.env.SESSION_SECRET)
+        const user = await db.oneOrNone("SELECT * from users where sid = $1;", [cooked])
+        if (!user) throw new Error("Invalid user")
+        return user
     } catch (error) {
-        // Log and handle errors
-        await console.log("Error submitting message", error);
-        await res.redirect("/groups/" + req.params.id);
+        await console.log("Error getting user:", error)
+        return
     }
-});
+}
 
-// Route handler to delete a message from a group
-app.post("/groups/:id/messages/delete", async (req, res) => {
-    try {
-        // Retrieve the message to be deleted
-        const message = await db.any("SELECT * from messages WHERE id = $1;", [parseInt(req.body.messageId)]);
+// Web sockets for group messaging
+app.use("api/messages", {
 
-        // Verify the message exists
-        if (!message.length) throw new Error("Message id does not exist");
+    // Find all messages given a group id
+    async find(params) {
+        try {
+            // Make sure route is valid
+            if (!params.route.__id) throw new Error("Invalid id");
 
-        // Verify the group ID is valid
-        const group = await db.any("SELECT * from groups WHERE id = $1;", [req.params.id]);
-        if (!group.length) throw new Error("Message does not contain a valid group id");
+            // Check db for messages
+            const query = await db.any(
+                "SELECT * FROM messages WHERE group_id = $1;",
+                [params.route.__id]
+            );
+            
+            // return messages
+            return query
+        } catch (error) {
+            console.log("Message find error:", error)
+            return []
+        }
+    },
 
-        // Check if the user is authorized to delete the message
-        if (message[0].username !== req.session.user.username && req.session.user.username !== group[0].username)
-            throw new Error("You can't delete another user's message");
+    // Submit a message
+    async create(data, params) {
+        try {
 
-        // Delete the message from the database
-        const query = await db.any("DELETE from messages WHERE id = $1 returning *;", [parseInt(req.body.messageId)]);
+            // Make sure valid user
+            const user = await getSID(params.connection.headers.cookie)
+            if (!user) throw new Error("Invalid user")
 
-        // Redirect back to the group page
-        await res.redirect("/groups/" + req.params.id);
-    } catch (error) {
-        // Log and handle errors
-        await console.log("Error deleting message", error);
-        await res.redirect("/groups/" + req.params.id);
+            // Check for valid route and message
+            if (!params.route.__id) throw new Error("Invalid id");
+            if (!data.message) throw new Error("Invalid message")
+
+            // Add message
+            const d = [data.message, user.username, params.route.__id];
+            const message = await db.oneOrNone(
+                "INSERT INTO messages(content, username, group_id) VALUES ($1, $2, $3) returning *;",
+                d
+            );
+
+            // Message failed
+            if (!message) throw new Error("invalid message")
+            
+            // Return the new message
+            return message;
+        } catch (error) {
+            console.log("Error creating message:", error)
+            return
+        }
+    },
+
+    async remove(id, params) {
+        try {
+
+            // Get user from cookie
+            const user = await getSID(params.connection.headers.cookie)
+            if (!user) throw new Error("Invalid user")
+
+
+            // Make sure id is valid
+            if (id < 0 || !params.route.__id) throw new Error("Invalid id or route")
+
+            // Get message
+            const message = await db.any("SELECT * from messages WHERE id = $1;", [id])
+            if (!message.length) throw new Error("Message id does not exist");
+
+            // Get group
+            const group = await db.any("SELECT * from groups WHERE id = $1;", [params.route.__id]);
+            if (!group.length) throw new Error("Message does not contain a valid group id");
+            
+            // Check if the user is authorized to delete the message TODO cant figure out how to do this with express-session + feathers
+            if (message[0].username !== user.username && user.username !== group[0].username) throw new Error("You can't delete another user's message");
+
+            // Delete message
+            const query = await db.any("DELETE from messages WHERE id = $1 returning *;", [id]);
+            
+            // Check to see a message was deleted
+            if(!query.length) throw new Error("Unable to delete message " + id)
+
+            // Return id to delete
+            return id
+
+
+        } catch (error) {
+            console.log("Error removing message:", error)
+            return
+        }
     }
 });
 
@@ -627,5 +724,8 @@ app.get("/logout", async function(req, res) {
     }
   })
 
+// Socket stuff
+app.on("connection", (conn) => app.channel("stream").join(conn));
+app.publish((data) => app.channel("stream"));
 
 module.exports = app.listen(3000);
