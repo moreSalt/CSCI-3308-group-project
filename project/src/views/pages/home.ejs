@@ -8,6 +8,10 @@
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Home Page</title>
+            <style>
+                h4 {text-align: center;}
+                h5 {text-align: center;}
+            </style>
         </head>
 
         <body>
@@ -15,8 +19,17 @@
             <div class="col">
                 <%- include ('../partials/message') %>
             </div>
+
+            <div class="col-auto">
+                <h5>Remember your favorite Comic ID's to get to them faster!</h5>
+            </div>
+
             <div class="col-auto">
                 <%- include ('../partials/search') %>
+            </div>
+
+            <div class="col-auto">
+                <h4>Review Feed: </h4>
             </div>
 
             <div class="container">

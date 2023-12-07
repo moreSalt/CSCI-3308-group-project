@@ -207,7 +207,7 @@ app.post("/search", async function(req, res) {
         throw new Error("Please enter a positive comic ID")
     }
 
-    const text1 = "/comics/";
+    const text1 = "/series/";
     const entry = text1.concat(req.body.searchQuery);
     return await res.redirect(entry);
 
