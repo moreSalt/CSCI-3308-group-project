@@ -78,7 +78,7 @@ const api = new MarvelAPI(process.env.MARVEL_API_KEY)
 
 // DEFAULT
 app.get("/", async function(req, res) {
-    res.render("pages/home");
+    res.redirect("/home")
 })
 
 // REGISTER
@@ -376,8 +376,8 @@ app.get("/comics/:id", async (req, res) => {
             // message: "this is an example message, you can remove it or add error: true if you want it to be color red"
         })
     } catch (error) {
-        console.log(error)
-        await res.render("/",{
+        console.log("Getting comic error:", error)
+        await res.render(`/comics/${req.params.id}`,{
              error: true,
              message: error
          })
@@ -434,11 +434,11 @@ app.post("/comics/:id", async (req, res) => {
 
 
     } catch (error) {
-        console.log("Error posting review:", error)
-        await res.render("pages/home", {
-            error: true,
-            message: error
-        })
+        console.log("Error submitting review:", error)
+        await res.render(`pages/comic`,{
+             error: true,
+             message: error
+         })
     }
 })
 
@@ -472,10 +472,10 @@ app.get("/comics/:id/:review_id/delete", async (req, res) => {
         // })
     } catch (error) {
         console.log("Error deleting review:", error)
-        await res.render("pages/home", {
-            error: true,
-            message: error
-        })
+        await res.render(`pages/comic`,{
+             error: true,
+             message: error
+         })
     }
 })
 
