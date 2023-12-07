@@ -29,7 +29,8 @@
 -- For Login in Page and Creating a user
 CREATE TABLE IF NOT EXISTS users(
     username VARCHAR(16) PRIMARY KEY,
-    password VARCHAR(70) NOT NULL
+    password VARCHAR(70) NOT NULL,
+    sid VARCHAR(256)
 );
 -- CREATE TABLE IF NOT EXISTS reviews;
 -- For Reviews have users_id with the text, rating, and date
