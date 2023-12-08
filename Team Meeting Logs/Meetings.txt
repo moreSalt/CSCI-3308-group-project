@@ -46,3 +46,10 @@ All Members present.
 Discussed all features that were live, discover, groups (minus socket i/o), account page, review creation, and comic book navigation.
 Plans for finishing the feed, both UI and back-end functionality, well within time limit and scope of the project were established.
 Responsibilities for next week mostly include polishing the website's functionality, and UI components in various ways, such as increasing user readability, making sure database inputs are properly sanitized, preventing user actions that would be harmful to the site in one way or another, and more.
+
+Team Meeting on 06 December 2023 at 5:30 - 6:30 PM. 
+All memebers present.
+Discussed final presentation and Project Report. 
+
+Meeting with Varsha 07 December 2023 ar 12:00 - 12:15 PM 
+Finalized the project report and presentation. 
