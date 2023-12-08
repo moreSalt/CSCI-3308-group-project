@@ -43,4 +43,17 @@ INSERT INTO users(username, password, sid) VALUES ('user22', 'password22#80', 's
 INSERT INTO users(username, password, sid) VALUES ('user23', 'password23#62', 'sid-122965');
 INSERT INTO users(username, password, sid) VALUES ('user24', 'password24#87', 'sid-196740');
 INSERT INTO users(username, password, sid) VALUES ('user25', 'password25#49', 'sid-441388');
--- Sample of insert statements for the reviews table
+
+INSERT INTO reviews(title, review, rating, username, ts) VALUES ('Comic Title 1', 'This is review text for comic 1.', 2, 'user1', '2022-12-06 04:40:28');
+INSERT INTO reviews(title, review, rating, username, ts) VALUES ('Comic Title 2', 'This is review text for comic 2.', 5, 'user2', '2022-12-06 04:40:28');
+
+INSERT INTO groups(id, about, username) VALUES ('group01', 'About group 1.', 'user1');
+INSERT INTO groups(id, about, username) VALUES ('group02', 'About group 2.', 'user2');
+INSERT INTO messages(content, username, group_id, ts) VALUES ('Message content 1.', 'user1', 'group01', '2022-12-06 04:40:28');
+INSERT INTO messages(content, username, group_id, ts) VALUES ('Message content 2.', 'user2', 'group02', '2022-12-06 04:40:28');
+INSERT INTO review_comics(review_id, comic_id) VALUES (1, 1);
+INSERT INTO review_comics(review_id, comic_id) VALUES (2, 2);
+
+
+
+
