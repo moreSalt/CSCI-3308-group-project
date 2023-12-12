@@ -1,9 +1,9 @@
-Marvel Comic Reviews Application README.md
+# Marvel Comic Reviews Application README.md
 
-Overview
+## Overview
 Marvel Comic Reviews is a full-stack web application that provides a platform for comic enthusiasts to explore, review, and discuss Marvel comics. The application is built using Node.js, Express, FeathersJS, and PostgreSQL, offering features like user registration, login, comic discovery, and group discussions.
 
-Features:
+## Features:
 User Authentication: Secure login and registration system.
 Profile Management: Users can update their username and password.
 Comic Reviews: Users can post and view reviews for different comics.
@@ -17,29 +17,30 @@ Frontend: EJS templating for dynamic page rendering.
 Authentication: bcrypt for password hashing.
 Session Management: express-session.
 APIs: Marvel Comics API for fetching comic details.
-Installation
 
-Clone the repository:
+## Installation
+
+#### Clone the repository:
 git clone git@github.com:moreSalt/CSCI-3308-group-project.git
 
-Navigate to the project directory:
-cd /CSCI-3308-GROUP-PROJECT/project
+#### Navigate to the project directory: 
+cd csci-3308-group-project/project
 
-Run Docker Compose:
+#### Run Docker Compose:
 docker-compose up
 
-Usage
+## Usage
 After installation, the application will be running on localhost:3000.
 Users need to register and log in to access the full features of the app.
 
-Important Commands
-To stop the Docker containers:
+## Important Commands
+#### To stop the Docker containers:
 docker-compose down 
 
-To remove Docker volumes (Warning: This will erase all data):
+#### To remove Docker volumes (Warning: This will erase all data):
 docker-compose down -v
 
-Testing
+## Testing
 The application includes a suite of user acceptance tests for key features like registration, login, and posting reviews.
 
 ## MAKE SURE TO RUN `docker compose down -v`, else testing will fail and other wack issues
